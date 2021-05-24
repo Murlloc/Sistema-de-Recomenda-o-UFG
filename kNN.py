@@ -14,10 +14,14 @@ rating = data_rating.loc[:,{"userId","movieId","rating"}]
 print(movie.head())
 print(rating.head())
 
-print('--------------------')
+print('----------------------------------------------------')
 
 data = pd.merge(movie,rating)
 data = data.iloc[:1000000,:]
 user_movie_table = data.pivot_table(index = ["title"],columns = ["userId"],values = "rating").fillna(0)
 
 print(user_movie_table.head(10))
+print('----------------------------------------------------')
+
+query_index = np.random.choice(user_movie_table.shape[0])
+print("Choosen Movie is: ",user_movie_table.index[query_index])
