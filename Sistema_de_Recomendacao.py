@@ -11,10 +11,10 @@ from surprise import SVD
 
 ##################################          Parametros       #####################################################
 
-FL_MODELO  = 0
-FL_MEMORIA = 1
-FL_KNN     = 0
-FL_SVD     = 1
+FL_MODELO  = 1
+FL_MEMORIA = 0
+FL_KNN     = 1
+FL_SVD     = 0
 
 ################################## Preparando tabela de Avaliações ###############################################
 r_cols = ['user_id', 'movie_id', 'rating', 'timestamp']
@@ -107,9 +107,15 @@ if (FL_MODELO == 1 & FL_SVD == 1):
     svd.fit(trainset)
     lista = []
 
-    #TODO -> excluir os itens já avaliados
-    #TODO -> Ordenar a lista e pegar os 10 filmes com maiores previsões (.est)
-    #TODO -> Organizar o metodo baseado em memoria
+    #TODO -> Codigo - excluir os itens já avaliados
+    #TODO -> Codigo - Ordenar a lista e pegar os 10 filmes com maiores previsões (.est)
+    #TODO -> Codigo - Organizar o metodo baseado em memoria
+
+    #TODO -> Parte Escrita - Introdução
+    #TODO -> Parte Escrita - Resumo
+    #TODO -> Parte Escrita - Estudo de Caso
+
+    #TODO -> Parte da Apresentação
 
     for i in range(df_ratings.head().columns.size):
         lista.append(svd.predict(5, i).est)
