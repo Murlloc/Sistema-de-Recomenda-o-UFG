@@ -12,9 +12,9 @@ from surprise import SVD
 ##################################          Parametros       #####################################################
 
 FL_MODELO  = 1
-FL_MEMORIA = 0
+FL_MEMORIA = 1
 FL_KNN     = 1
-FL_SVD     = 0
+FL_SVD     = 1
 
 ################################## Preparando tabela de Avaliações ###############################################
 r_cols = ['user_id', 'movie_id', 'rating', 'timestamp']
@@ -54,30 +54,33 @@ data = Dataset.load_from_df(ratings, reader)
 
 if (FL_MEMORIA == 1):
     df_ratings_dummy = df_ratings.copy().fillna(0)
-    df_ratings_dummy.head()
-    #cosine similarity of the ratings
+
+    ################################## cosine similarity of the ratings ##################################
     similarity_matrix = cosine_similarity(df_ratings_dummy, df_ratings_dummy)
+    ################################## calculate ratings using weighted sum of cosine similarity ##################################
     similarity_matrix_df = pd.DataFrame(similarity_matrix, index=df_ratings.index, columns=df_ratings.index)
-    #calculate ratings using weighted sum of cosine similarity
-    #function to calculate ratings
+    
     def calculate_ratings(id_movie, id_user):
         if id_movie in df_ratings:
-            cosine_scores = similarity_matrix_df[id_user] #similarity of id_user with every other user
-            ratings_scores = df_ratings[id_movie]      #ratings of every other user for the movie id_movie
-            #won't consider users who havent rated id_movie so drop similarity scores and ratings corresponsing to np.nan
+            ################################## similarity of id_user with every other user ##################################
+            cosine_scores = similarity_matrix_df[id_user] 
+            ################################## ratings of every other user for the movie id_movie ##################################
+            ratings_scores = df_ratings[id_movie]      
+            ################################## won't consider users who havent rated  id_movie so drop similarity scores and ratings corresponsing to np.nan ##################################
             index_not_rated = ratings_scores[ratings_scores.isnull()].index
             ratings_scores = ratings_scores.dropna()
             cosine_scores = cosine_scores.drop(index_not_rated)
-            #calculating rating by weighted mean of ratings and cosine scores of the users who have rated the movie
+            ################################## calculating rating by weighted mean of ratings and cosine scores of the users who have rated the movie ##################################
             ratings_movie = np.dot(ratings_scores, cosine_scores)/cosine_scores.sum()
         else:
             return 2.5
         return ratings_movie
 
+    print('\n')
+    ################################## calculate rating by movie_id and user_id ##################################
+    print("Wheight approah - Rating by movie_id and user_id: ", calculate_ratings(5,2))
 
-    print('\n\n\n')
-    print(calculate_ratings(5,2))
-
+    ################################## evaluation of our wheight model on the test set using root_mean_squared_error ##################################
     def score_on_test_set():
         user_movie_pairs = zip(X_test['movie_id'], X_test['user_id'])
         predicted_ratings = np.array([calculate_ratings(movie, user) for (movie,user) in user_movie_pairs])
@@ -85,8 +88,9 @@ if (FL_MEMORIA == 1):
         score = np.sqrt(mean_squared_error(true_ratings, predicted_ratings))
         return score
 
-    print('\n\n')
-    print(score_on_test_set())
+    print('\n')
+    print("Evaluation of our wheight model: ", score_on_test_set())
+    print('\n')
 
 if (FL_MODELO == 1 & FL_KNN == 1):
     knn = KNNBasic()
