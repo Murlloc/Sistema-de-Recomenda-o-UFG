@@ -1,6 +1,7 @@
 #importing necessary libraries
 import numpy as np
 import pandas as pd
+import math
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
@@ -12,7 +13,7 @@ from surprise import SVD
 
 FL_MODELO  = 1
 FL_MEMORIA = 0
-FL_KNN     = 1
+FL_KNN     = 0
 FL_SVD     = 1
 
 ################################## Preparando tabela de Avaliações ###############################################
@@ -46,7 +47,6 @@ df_ratings = X_train.pivot(index='user_id', columns='movie_id', values='rating')
 
 print(df_ratings.head()) #Amostra
 
-
 ratings = ratings.drop(columns='timestamp')
 reader = Reader()
 #dataset creation
@@ -69,5 +69,12 @@ if (FL_MODELO == 1 & FL_SVD == 1):
 
     trainset = data.build_full_trainset()
     svd.fit(trainset)
+    lista = []
 
-    print(svd.predict(5, 2))
+    #TODO -> excluir os itens já avaliados
+    #TODO -> Ordenar a lista e pegar os 10 filmes com maiores previsões (.est)
+
+    for i in range(df_ratings.head().columns.size):
+        lista.append(svd.predict(5, i).est)
+    lista.sort(reverse=True)
+    print('hi')
