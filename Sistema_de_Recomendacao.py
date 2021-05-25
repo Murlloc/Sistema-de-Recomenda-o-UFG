@@ -18,6 +18,7 @@ i_cols = ['movie_id', 'title' ,'release date','video release date', 'IMDb URL', 
 'Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
 movies = pd.read_csv('/home/murloc/VsCode/Python/TCC/Sistema-de-Recomenda-o-UFG/DataSet/u.item',  sep='|', names=i_cols, encoding='latin-1')
 print(movies.head())
+
 u_cols = ['user_id', 'age', 'sex', 'occupation', 'zip_code']
 users = pd.read_csv('/home/murloc/VsCode/Python/TCC/Sistema-de-Recomenda-o-UFG/DataSet/u.user', sep='|', names=u_cols,
 encoding='latin-1')
