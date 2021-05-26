@@ -7,13 +7,14 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from surprise import Reader, Dataset, KNNBasic
 from surprise.model_selection import cross_validate
+from surprise.model_selection import GridSearchCV
 from surprise import SVD
 
 ##################################          Parametros       #####################################################
 
 FL_MODELO  = 1
-FL_MEMORIA = 1
-FL_KNN     = 1
+FL_MEMORIA = 0
+FL_KNN     = 0
 FL_SVD     = 1
 
 ################################## Preparando tabela de Avaliações ###############################################
@@ -78,7 +79,7 @@ if (FL_MEMORIA == 1):
 
     print('\n')
     ################################## calculate rating by movie_id and user_id ##################################
-    print("Wheight approah - Rating by movie_id and user_id: ", calculate_ratings(5,2))
+    print("Wheight approah - Rating by movie_id and user_id: ", calculate_ratings(1,110))
 
     ################################## evaluation of our wheight model on the test set using root_mean_squared_error ##################################
     def score_on_test_set():
@@ -100,7 +101,7 @@ if (FL_MODELO == 1 & FL_KNN == 1):
 
     knn.fit(trainset)
 
-    print(knn.predict(5, 2))
+    print(knn.predict(1, 110))
 
 if (FL_MODELO == 1 & FL_SVD == 1):
     svd = SVD()
@@ -113,7 +114,6 @@ if (FL_MODELO == 1 & FL_SVD == 1):
 
     #TODO -> Codigo - excluir os itens já avaliados
     #TODO -> Codigo - Ordenar a lista e pegar os 10 filmes com maiores previsões (.est)
-    #TODO -> Codigo - Organizar o metodo baseado em memoria
 
     #TODO -> Parte Escrita - Introdução
     #TODO -> Parte Escrita - Resumo
@@ -122,6 +122,12 @@ if (FL_MODELO == 1 & FL_SVD == 1):
     #TODO -> Parte da Apresentação
 
     for i in range(df_ratings.head().columns.size):
-        lista.append(svd.predict(5, i).est)
-    lista.sort(reverse=True)
-    print('hi')
+        predict = svd.predict(5, i)
+        lista.append({'pred': predict.est, 'movie_index': predict.iid})
+
+    def myFunc(e):
+        return e['pred']
+
+    lista.sort(key=myFunc, reverse=True)
+    top_10 = lista[:10]
+
