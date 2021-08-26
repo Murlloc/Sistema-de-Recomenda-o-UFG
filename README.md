@@ -1,7 +1,7 @@
 # Sistema-de-Recomenda-o-UFG
 
-Will need to install:
+Check if you have the Flask and the pymongo installed with 'pip list'
 
-  Flask;
+Flask -> pip3 install Flask
 
-  pymongo;
+pymongo -> pip3 install pymongo
