@@ -17,15 +17,15 @@ except:
 @app.route("/", methods=["GET"])
 def HelloWorld():
     return {"Hello World": 123}
-# [["item1", "item2", "item3"],["user1", "user2", "user3"],[nota1, nota2, nota3]]
 
-# [{"reviewr_id": "FODA-SE", "asin": "123123","overall": 5.0},[reviewr_id2,asin2,overall2]...]
+# [{"reviewr_id": "FODA-SE", "asin": "123123","overall": 5.0},
+# [reviewr_id2,asin2,overall2]...]
 
 @app.route("/users", methods=["GET"])
 def getUsers():
-    dbResponse = db.booksReviews.find().limit(100000)
+    dbResponse = db.booksReviews.find()
     output = [{item: data[item] for item in data if item != '_id'} for data in dbResponse]
-    return str(output)
+    return output
 
 @app.route("/userCreate", methods=["POST"])
 def createUser():
