@@ -23,7 +23,7 @@ def HelloWorld():
 
 @app.route("/users", methods=["GET"])
 def getUsers():
-    dbResponse = db.booksReviews.find()
+    dbResponse = db.cleanBooksReviews.find()
     output = [{item: data[item] for item in data if item != '_id'} for data in dbResponse]
     return output
 
