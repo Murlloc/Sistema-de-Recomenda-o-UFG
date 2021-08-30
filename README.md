@@ -8,12 +8,12 @@ pymongo -> pip3 install pymongo
 
 
 ----------------------------------------------------------------
-#CORE
+# CORE
 
 server          -> API 
 DataProcessing  -> This will process the data to create the userXMatrix, and to aply the   SVD method on it
 
-#Utilities
+# Utilities
 
 *In case you need*
 Converter  -> Read the csv file and write the data in small json files
