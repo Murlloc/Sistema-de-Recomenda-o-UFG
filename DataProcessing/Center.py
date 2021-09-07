@@ -3,7 +3,7 @@ import DataPreparing as dpre
 import DataProcessing as dpro
 import pandas as pd
 
-QTD_DOCUMENTS = 1000000 #MAX = 23000000
+QTD_DOCUMENTS = 1000000 #MAX = 23000000 
 
 try:
     paginadorInicio = 0
@@ -23,9 +23,7 @@ try:
         print(df.count())
         print("\n")
     
-    data = dpre.dataSetCreation(df)
-    svd  = dpro.svdRatings(data)
-    print(dpro.predictions("A1YJFHLJ2TVZ0C", "0778323498"))
+    print(dpro.predictions(1, dpre.dataSetCreation(df)))
     
 except:
     print("Deu ruim na leitura")
