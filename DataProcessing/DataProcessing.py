@@ -14,9 +14,9 @@ def svdRatings(data):
 def predictions(userID, data):
 
     svd = SVD()
-    svd.k = 5
+    svd.k = 20
     print('***************************** SVD ****************************************\n')
-    #print(cross_validate(svd, data, measures=['RMSE'], cv = 3))
+    print(cross_validate(svd, data, measures=['RMSE'], cv = 3))
     print('\n')
     trainset = data.build_full_trainset()
     svd.sim_options['user_based'] = False
