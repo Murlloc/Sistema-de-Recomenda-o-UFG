@@ -31,10 +31,13 @@ def predictions(userID, data):
         "itens": []
     }
     while size < itensQTDE:
-        result = svd.predict(userID, size)
+        user = trainset.to_raw_uid(userID)
+        itemId = trainset.to_raw_iid(size)
+        result = svd.predict(user, itemId)
+        print("result: ", result)
         item = {
-            "_id": result.iid,
-            "rawID": svd.trainset.to_raw_iid(result.iid),
+            "_id": result.uid,
+            "rawID": result.iid,
             "previsão": result.est
         }
         itens.append(item)
