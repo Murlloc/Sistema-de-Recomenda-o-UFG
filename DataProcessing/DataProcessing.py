@@ -14,11 +14,6 @@ def predictions(userID, data):
     size = 0
     itens = []
     itensQTDE = svd.trainset.n_items
-    userPrediction = {
-        "_id": userID,
-        "rawID": "",
-        "itens": []
-    }
     while size < itensQTDE:
         user = trainset.to_raw_uid(userID)
         itemId = trainset.to_raw_iid(size)
@@ -32,6 +27,19 @@ def predictions(userID, data):
         itens.append(item)
         print(item)
         size = size + 1
+
+    def myFunc(e):
+        return e['pred']
+    itens.sort(key=myFunc, reverse=True)
+    top_15 = itens[:15]
+
+    userPredictions = {
+        "_id": userID,
+        "rawID": str(trainset.to_raw_uid(userID)),
+        "itens": top_15
+    }
+    print("\n\n")
+    print(userPredictions)
 
 """
 usersPredictions 
