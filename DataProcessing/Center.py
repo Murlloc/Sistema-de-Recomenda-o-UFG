@@ -2,30 +2,35 @@ import db
 import DataPreparing as dpre
 import DataProcessing as dpro
 import pandas as pd
-
-QTD_DOCUMENTS = 1000000 #MAX = 23000000 
+import ThreadSystem as ts
+import numpy as np
+import math
+QTD_DOCUMENTS = 23000000 
 
 try:
-    paginadorInicio = 0
-    paginadorFim    = 1000000
+    paginadorInicio  = 0
+    paginadorFim     = 2000000
+    dbResponses      = []
+    dbResponsesParts = []
 
-    while paginadorInicio != QTD_DOCUMENTS:
+    while paginadorInicio <= QTD_DOCUMENTS:
         dbResponse = db.getReviewsOnBooks(paginadorInicio,paginadorFim)
-        if paginadorInicio == 0:
-            list_cur_zero = list(dbResponse)
-            df = pd.DataFrame(list_cur_zero)
-        else:
-            list_cur = list(dbResponse)
-            dfAux = pd.DataFrame(list_cur)
-            df = pd.concat([df,dfAux], ignore_index=True)
-            del dfAux
+        dbResponses = np.append(dbResponses, dbResponse)
         paginadorInicio = paginadorFim
-        paginadorFim = paginadorFim + 100000
+        paginadorFim = paginadorFim + 2000000
 
-        print(df.count())
-        print("\n")
+    if len(dbResponses) > 1:
+        numberOfTimes = math.ceil(len(dbResponses)/6)
+        aux1 = 0
+        aux2 = 6
+        for count in range(numberOfTimes):
+            dbResponsesParts.append(dbResponses[aux1:aux2])
+            aux1 = aux2
+            aux2 = aux2 + 7
+        for element in dbResponsesParts:
+            ts.run(element)
     
-    print(dpro.predictions(1, dpre.dataSetCreation(df)))
-    
+    print("Cheguei")
+
 except Exception as e:
 	print("ERROR : "+str(e))
