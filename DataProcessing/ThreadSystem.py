@@ -1,9 +1,12 @@
 import queue
 from threading import Thread
 from time import sleep
+import pandas as pd
 
 def toDataFrame(data):
-    return 'bar'
+    list_cur_zero = list(data)
+    df = pd.DataFrame(list_cur_zero)
+    return df
 
 def run(DBdata):
 
@@ -11,26 +14,16 @@ def run(DBdata):
     threads_list = list()
 
     for element in DBdata:
+        t = Thread(target=lambda q, arg1: 
+            q.put(toDataFrame(arg1)), args=(que, element))
+        t.start()
+        threads_list.append(t)
 
-        threads_list.append(Thread(target=lambda q, arg1: 
-            q.put(toDataFrame(arg1)), args=(que, element)))
-
-    # Add more threads here
-    ...
-    t2 = Thread(target=lambda q, arg1: q.put(toDataFrame(arg1)), args=(que, 'world2!'))
-    t2.start()
-    threads_list.append(t2)
-    ...
-    t3 = Thread(target=lambda q, arg1: q.put(toDataFrame(arg1)), args=(que, 'world3!'))
-    t3.start()
-    threads_list.append(t3)
-    ...
-
-    # Join all the threads
     for t in threads_list:
         t.join()
 
-    # Check thread's return value
+    aux = pd.DataFrame()
     while not que.empty():
         result = que.get()
-        print(result)
+        aux = pd.concat([aux,result], ignore_index=True)
+    return aux
