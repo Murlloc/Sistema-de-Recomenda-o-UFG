@@ -1,16 +1,7 @@
-from flask import Flask
+from flask import Flask, request
 import pymongo
+import DataProcessing.db as db
 app = Flask(__name__)
-
-try:
-    mongo = pymongo.MongoClient(
-        host="localhost",
-        port=27017
-    )
-    db = mongo.StoreDB
-    mongo.server_info()
-except:
-    print("deu ruim")
 
 #################### Routes ################################
 
@@ -26,6 +17,17 @@ def getUsers():
     dbResponse = db.cleanBooksReviews.find()
     output = [{item: data[item] for item in data if item != '_id'} for data in dbResponse]
     return output
+
+@app.route("/list/<user_id>/<type>", methods=["GET"])
+def getPredictions(user_id, type):
+    itens = []
+    dbResponse = db.getBooksPredictions(user_id)
+    for element in dbResponse:
+        for item in element['itens']:
+            itens.append(db.getBook(item['rawID']))
+    return {'livros': itens}
+    
+
 
 @app.route("/userCreate", methods=["POST"])
 def createUser():

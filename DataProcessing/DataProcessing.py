@@ -1,8 +1,9 @@
 from surprise.model_selection import cross_validate
 from surprise.model_selection import GridSearchCV
 from surprise import SVD
+import db
 
-def predictions(userID, data):
+def predictions(data):
     svd = SVD()
     svd.k = 20
     print('***************************** SVD ****************************************\n')
@@ -11,35 +12,44 @@ def predictions(userID, data):
     trainset = data.build_full_trainset()
     svd.fit(trainset)
 
-    size = 0
-    itens = []
+    size2     = 0
+    itens     = []
     itensQTDE = svd.trainset.n_items
-    while size < itensQTDE:
-        user = trainset.to_raw_uid(userID)
-        itemId = trainset.to_raw_iid(size)
-        result = svd.predict(user, itemId)
-        print("result: ", result)
-        item = {
-            "_id": result.uid,
-            "rawID": result.iid,
-            "previsão": result.est
+
+    while size2 < 100:
+        size = 0
+        user = trainset.to_raw_uid(size2)
+
+        if db.getUser(user) == True:
+            size2 = size2 + 1
+            continue
+            
+        while size < itensQTDE:
+            itemId = trainset.to_raw_iid(size)
+            result = svd.predict(user, itemId)
+            item = {
+                "_id": size,
+                "rawID": result.iid,
+                "previsão": result.est
+            }
+            itens.append(item)
+            size = size + 1
+        def myFunc(e):
+            return e['previsão']
+        itens.sort(key=myFunc, reverse=True)
+        top_25 = itens[:25]
+
+        userPredictions = {
+            "rawID": str(trainset.to_raw_uid(size2)),
+            "itens": top_25
         }
-        itens.append(item)
-        print(item)
-        size = size + 1
 
-    def myFunc(e):
-        return e['pred']
-    itens.sort(key=myFunc, reverse=True)
-    top_15 = itens[:15]
-
-    userPredictions = {
-        "_id": userID,
-        "rawID": str(trainset.to_raw_uid(userID)),
-        "itens": top_15
-    }
-    print("\n\n")
-    print(userPredictions)
+        if db.insertBookPrediction(userPredictions) == True:
+            print("\n\n")
+            print(str(trainset.to_raw_uid(size2)) + " -> Foi add com sucesso")
+        else:
+            print("error no insert")
+        size2 = size2 + 1
 
 """
 usersPredictions 
